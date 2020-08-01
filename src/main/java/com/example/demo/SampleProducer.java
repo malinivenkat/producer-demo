@@ -60,7 +60,7 @@ public class SampleProducer {
 	private static final String BOOTSTRAP_SERVERS = "localhost:9092";
 	private static final String TOPIC = "order";
 
-	private final KafkaSender<Integer, String> sender;
+	private final KafkaSender<Integer, Order> sender;
 	private final SimpleDateFormat dateFormat;
 	Map<String, Object> props = new HashMap<>();
 
@@ -71,8 +71,8 @@ public class SampleProducer {
 		props.put(ProducerConfig.CLIENT_ID_CONFIG, "sample-producer");
 		props.put(ProducerConfig.ACKS_CONFIG, "all");
 		props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, IntegerSerializer.class);
-		props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-		SenderOptions<Integer, String> senderOptions = SenderOptions.create(props);
+		props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, OrderSerializer.class);
+		SenderOptions<Integer, Order> senderOptions = SenderOptions.create(props);
 
 		sender = KafkaSender.create(senderOptions);
 		dateFormat = new SimpleDateFormat("HH:mm:ss:SSS z dd MMM yyyy");
@@ -94,8 +94,9 @@ public class SampleProducer {
 		sender.close();
 	}
 
-	public String generateOrder() {
+	public Order generateOrder() {
 		List<Product> pList = new ArrayList<Product>();
+		//TODO make this persistable later
 		++orderNo;
 		Product p1 = new Product("P" + orderNo, new Random().nextInt(10), 2, 3, 3, "E");
 		Product p2 = new Product("P" + (orderNo + 100), new Random().nextInt(5), 2, 5, 1, "X");
@@ -113,7 +114,8 @@ public class SampleProducer {
 			e1.printStackTrace();
 		}
 
-		return json;
+//		return json; 
+		return o1;
 	}
 
 	public static void main(String[] args) throws Exception {
